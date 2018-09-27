@@ -7,7 +7,6 @@ open Suave.Successful
 open Suave.Cookie
 open Suave.Swagger.Swagger
 open Suave.Swagger.FunnyDsl
-open Suave.Swagger
 
 module Simple =
     let private cookieState =
@@ -20,12 +19,10 @@ module Simple =
 
     type Snapshot = { id : int }
     type SnapshotsResult = { items : Snapshot list }
-
     let login (email : string) =
         Cookie.updateCookies
             cookieState
             (fun _ -> Encoding.UTF8.GetBytes email)
-
     let getData =
         Cookie.cookieState
             cookieState
@@ -58,6 +55,8 @@ module Swagger' =
         }
     let start () =
         startWebServer defaultConfig api.App
+
+
 
 [<EntryPoint>]
 let main _ = 
