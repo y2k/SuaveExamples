@@ -8,6 +8,8 @@ FROM  mcr.microsoft.com/dotnet/core/runtime:2.2.5-alpine3.9
 
 EXPOSE 8080
 
+ENV foo bar
+
 WORKDIR /app
 COPY --from=0 /app/bin/Release/netcoreapp2.1/linux-x64/publish .
 

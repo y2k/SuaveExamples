@@ -9,6 +9,9 @@ open System
 open System.Text
 
 module Simple =
+
+    let (^) f a = f a
+
     let private cookieState =
         CookiesState.create
             (Encoding.ASCII.GetBytes "01234567890123456789012345678901")
@@ -37,6 +40,13 @@ module Simple =
             |> Option.ofChoice
             |> Option.map (fun x -> login x >=> OK "")
             |> Option.defaultValue (RequestErrors.FORBIDDEN ""))
+
+    let showEnv =
+        request ^ fun r ->
+            let env = r.queryParamOpt "name" |> Option.get |> snd |> Option.get
+            let envVal = System.Environment.GetEnvironmentVariable env
+            sprintf "%s = %s\n" env envVal |> OK
+
     let time = 
         request (fun _ -> OK(sprintf "Server time = %O\n" DateTime.Now))
     let start() =
@@ -53,6 +63,9 @@ module Swagger' =
     type TimeResult = TimeResult
     let api =
         swagger {
+            for route in getting <| simpleUrl "/showEnv" |> thenReturns Simple.showEnv do
+                yield parameter "name" Of route
+                    (fun p -> { p with Type = (Some typeof<string>) })
             for route in getting <| simpleUrl "/time" |> thenReturns Simple.time do
                 yield route |> addResponse 200 "Return data" (Some typeof<string>)
             for route in posting <| simpleUrl "/loginViaGoogle" |> thenReturns Simple.loginViaGoogle do
