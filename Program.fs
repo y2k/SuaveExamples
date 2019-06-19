@@ -48,7 +48,8 @@ module Simple =
             sprintf "%s = %s\n" env envVal |> OK
 
     let time = 
-        request (fun _ -> OK(sprintf "Server time = %O\n" DateTime.Now))
+        request (fun _ -> OK(sprintf "Server time (ver = 1.0) = %O\n" DateTime.Now))
+
     let start() =
         choose [
             GET >=> path "/time" >=> OK(sprintf "Server time = %O" DateTime.Now)
